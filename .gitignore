@@ -1,2 +1,7 @@
 reccccc/
 withCOLOLINE.l
+lex.yy.c
+out
+run
+syn.tab.c
+syn.tab.h
