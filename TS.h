@@ -100,15 +100,15 @@ void display(){
         
         switch(TS[i]->content.type)
         {
-        case 1:printf("\tINTEGER\t|\n"); break;
-        case 2:printf("\tFLOAT\t|\n");break;
-        case 3:printf("\tCHAR\t|\n");break;
-        case 0:printf("\tCONST\t|\n");break;
+        case 1:printf("\tINTEGER\t|"); break;
+        case 2:printf("\tFLOAT\t|");break;
+        case 3:printf("\tCHAR\t|");break;
+        case 0:printf("\tCONST\t|");break;
         }
-        if(!TS[i]->content.constant{
-            printf("  NO   ");
+        if(!TS[i]->content.constant){
+            printf("  NO   |\n");
         }else{
-            printf("  YES  ");
+            printf("  YES  |\n");
         }
         /* Before Colision */
         p=TS[i];

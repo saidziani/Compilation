@@ -15,7 +15,6 @@ int doubleDec(char name[]){
 int getSize(char name[]){
     item adress=creat_noeud();
     search(name,&adress);
-    //printf("%s/%d/%d\n",adress->content.name,adress->content.type,adress->content.size );
     return adress->content.size ;
 }
 
@@ -62,3 +61,11 @@ int checkConstModif(char name[]){
     return 1;
 }
 
+//check type 
+int getArit(int type){
+    if( type != 1  ){
+        yyerror("Types Incompatibility");
+        return 0;
+    }
+    return 1;
+}

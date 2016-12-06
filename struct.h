@@ -11,6 +11,7 @@ typedef struct{
     int type;
     int size;
     int constant;
+    int used;
     char name[50];
 }Content;
 

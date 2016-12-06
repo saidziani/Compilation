@@ -41,19 +41,19 @@ S : IDF '{' VAR'{' Declarations '}' CODE '{' Instructions '}' '}'
 
 Type: INTEGER {ty=1;} |CHAR {ty=3;}| FLOAT {ty=2;} 
 ;
-idfVar : IDF {if(!doubleDec($1)) insert($1,ty,0,0);}|
-         IDF {if(!doubleDec($1)) insert($1,ty,0,0);} '|' idfVar |
+idfVar : IDF {if(!doubleDec($1)) insert($1,ty,0,-1,0);}|
+         IDF {if(!doubleDec($1)) insert($1,ty,0,-1,0);} '|' idfVar |
 ;
 idfTabVar : IDF'['Entier']' {
             if(!doubleDec($1)) 
-                insert($1,ty,$3,0);
+                insert($1,ty,0,$3,0);
                 sprintf(word,"%d",$3);
                 quad("BOUNDS","1",word," ");
                 quad("ADEC",$1," "," "); 
             }
             |IDF'['Entier']' {
             if(!doubleDec($1)) 
-                insert($1,ty,$3,0);
+                insert($1,ty,0,$3,0);
                 sprintf(word,"%d",$3);
                 quad("BOUNDS","1",word," ");
                 quad("ADEC",$1," "," ");
@@ -62,8 +62,8 @@ idfTabVar : IDF'['Entier']' {
 Declarations :  Type idfVar ';' Declarations | 
                 VEC Type idfTabVar ';' Declarations |
                 |CONST IDF '=' typeVal ';' {
-                if(!doubleDec($2)) 
-                    insert($2,0,0,0);
+                if(!doubleDec($2))
+                    insert($2,ty,1,-1,0);
                 } Declarations
 ;
 typeVal : Entier {ty=1;}|caractere {ty=3;}|Reel {ty=2;}
@@ -76,22 +76,24 @@ inst :  Affectation Instructions|
     ifElse Instructions
 ;
 Affectation :   IDF '=' IDF ';' {
+                    checkConstModif($1);
                     checkType(getType($1),getType($3));
                     used($1);
                     used($3);
                     quad("=",$1,$3," ");
                     } |
                 IDF '['Entier']' '=' typeVal ';' {
+                    checkConstModif($1);
                     checkSize($1,$3); checkType(getType($1),ty);
                     used($1);
                     }|
                 IDF '=' typeVal ';' {
+                    checkConstModif($1);
                     checkType(getType($1),ty);
                     used($1);
-                   /* sprintf(word,"%d",$3);
-                    quad("=",$1,word," ");*/
                     }|
                 IDF '=' IDF '['Entier']' ';' {
+                    checkConstModif($1);
                     checkSize($3,$5);
                     checkType(getType($1),getType($3)); 
                     used($1);
@@ -101,17 +103,38 @@ Affectation :   IDF '=' IDF ';' {
                     checkSize($1,$3); 
                     checkType(getType($1),getType($6));
                     }|
-                IDF '='operationArithmetique ';'
+                IDF '[' IDF ']' '=' IDF ';' {
+                    checkType(getType($1),getType($6));
+                    getArit(getType($3));
+                    }|
+                IDF '=' IDF '[' IDF ']' ';' {
+                    checkConstModif($1);
+                    checkType(getType($1),getType($3));
+                    getArit(getType($5));
+                    }|
+                IDF '='operationArithmetique ';'{
+                    getArit(getType($1));
+                    checkConstModif($1);
+                    }
+                IDF '[' Entier ']' '='operationArithmetique ';'{
+                    checkConstModif($1);
+                    getArit(getType($1));
+                    }
+                IDF '[' IDF ']' '='operationArithmetique ';'{
+                    checkConstModif($1);
+                    getArit(getType($1));
+                    //getArit(getType($3));
+                    }
 ;
-expAfect : IDF{ used($1); }  | typeVal
+expArit : IDF{ used($1); getArit(getType($1)); }  | typeVal { getArit(ty); }
 ;
 exp :  IDF { used($1); } | typeVal | operationLogique | operationArithmetique
 ;
 operationArithmetique : 
-        expAfect '+' expAfect |
-        expAfect '-' expAfect |
-        expAfect '*' expAfect |
-        expAfect '/' expAfect 
+        expArit '+' expArit |
+        expArit '-' expArit |
+        expArit '*' expArit |
+        expArit '/' expArit 
 ;
 operationLogique :  
             exp or exp |
