@@ -1,0 +1,26 @@
+MonProg
+{
+VAR
+{
+CONST Ab=5 ;
+INTEGER Df | Gg;
+VEC CHAR Cd[5] ;
+FLOAT Fr5 | Gth4;
+VEC INTEGER Tab[100];
+CHAR Lk;
+}
+CODE
+{
+Df = Gg;
+
+    Gg = 25 ;
+Cd[5] = '5';
+Df = Tab[15];
+IF(Ab < 2)
+    Df = 5;
+END
+Df = 8 + 'r' ;
+Lk = Cd[1];
+Tab[5]= Gg ;
+}
+}
