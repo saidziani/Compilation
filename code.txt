@@ -16,20 +16,24 @@ Df = Df + Gg;
 Gg = 25 ;
 Cd[5] = '5';
 Df = Tab[15];
-IF(Ab < 2)
+Df = Df + 45;
+IF( Fr5 ! Lk )
+ Lk=Cd[1];
+END
+IF(Tab[5] < Fr5 + 5 )
     Df = 5;
 END
-
 FOR(I: 1: Gg)
-Df = 5;
+    Df = 5;
 END
-
 Tab[I] = 5;
+WHILE(Tab[1] < 4 )
+    I=I+1;
+END
 Cd[5] = 'g';
 Fr5 = 6.2 ;
 Lk = Hgt;
-Gg = 5 + 6;
+Gg = 5 + 6.3;
 Tab[4] = 0;
-
 }
 }

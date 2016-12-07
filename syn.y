@@ -6,6 +6,7 @@
 #include "routine.h"
 #include "quad.h"
 #include "op.h"
+    
 extern FILE* yyin;
 extern int yylineno;
 int yyerror(char *msg);
@@ -103,37 +104,62 @@ Affectation :   IDF '=' IDF ';' {
                 IDF '[' Entier ']' '=' IDF ';' {
                     checkSize($1,$3); 
                     checkType(getType($1),getType($6));
+                    used($1);
+                    used($6);
                     }|
                 IDF '[' IDF ']' '=' IDF ';' {
                     checkType(getType($1),getType($6));
                     getArit(getType($3));
+                    used($1);
+                    used($3);
+                    used($6);
                     }|
                 IDF '[' IDF ']' '=' typeVal ';' {
                     checkType(getType($1),ty);
                     getArit(getType($3));
+                    used($1);
+                    used($3);
                     }|
                 IDF '=' IDF '[' IDF ']' ';' {
                     checkConstModif($1);
                     checkType(getType($1),getType($3));
                     getArit(getType($5));
+                    used($1);
+                    used($3);
+                    used($5);
                     }|
                 IDF '='operationArithmetique ';'{
                     getArit(getType($1));
                     checkConstModif($1);
+                    used($1);
                     }|
                 IDF '[' Entier ']' '='operationArithmetique ';'{
                     checkConstModif($1);
                     getArit(getType($1));
+                    used($1);
                     }|
                 IDF '[' IDF ']' '='operationArithmetique ';'{
                     checkConstModif($1);
                     getArit(getType($1));
                     getArit(getType($3));
+                    used($1);
+                    used($3);
                     }
 ;
-expArit : IDF{ used($1); getArit(getType($1)); }  | typeVal { getArit(ty); }
+expArit : IDF{ used($1); getArit(getType($1)); }  |
+          IDF '['Entier']' { used($1); getArit(getType($1)); }  |
+          IDF '['IDF']' { used($1); used($3); getArit(getType($1)); getArit(getType($3)); }  |
+          typeVal { getArit(ty); }
 ;
-exp :  IDF { used($1); } | typeVal | operationLogique | operationArithmetique
+exp :  IDF { used($1); } | 
+       IDF '['Entier']' { used($1); getArit(getType($1)); }  |
+       IDF '['IDF']' { used($1); used($3); getArit(getType($1)); getArit(getType($3)); }  |
+       typeVal | operationLogique | operationArithmetique
+;
+expCompar :  IDF { used($1); getArit(getType($1)); } | 
+             IDF '['Entier']' { used($1); getArit(getType($1)); }  |
+             IDF '['IDF']' { used($1); used($3); getArit(getType($1)); getArit(getType($3)); }  |
+             typeVal {getArit(ty);} | operationArithmetique
 ;
 operationArithmetique : 
         expArit'+'expArit |
@@ -148,12 +174,12 @@ operationLogique :
                 '!''('exp')'
 ;   
 operationComparaison : 
-        exp '>' exp |
-        exp '<' exp |
-        exp dif exp |
-        exp eg exp |
-        exp supeg exp |
-        exp infeg exp 
+        expCompar '>' expCompar |
+        expCompar '<' expCompar |
+        expCompar dif expCompar |
+        expCompar eg expCompar |
+        expCompar supeg expCompar |
+        expCompar infeg expCompar 
 ;
 Condition : operationComparaison|operationLogique
 ;
@@ -179,7 +205,9 @@ int main()
     init();
     yyparse();
     display();
+    deleteNotUsed();
     displayQ();
+    //display();
     return 0;
 }
 
