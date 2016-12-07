@@ -61,9 +61,9 @@ int checkConstModif(char name[]){
     return 1;
 }
 
-//check type 
+//check type non integer
 int getArit(int type){
-    if( type != 1  ){
+    if( (type != 1) && (type != 2)  ) {
         yyerror("Types Incompatibility");
         return 0;
     }

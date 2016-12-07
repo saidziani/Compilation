@@ -5,13 +5,14 @@ VAR
 CONST Ab=5 ;
 INTEGER Df | Gg;
 VEC CHAR Cd[5] ;
+INTEGER I ;
 FLOAT Fr5 | Gth4;
 VEC INTEGER Tab[100];
 CHAR Lk | Hgt;
 }
 CODE
 {
-Df = Gg;
+Df = Df + Gg;
 Gg = 25 ;
 Cd[5] = '5';
 Df = Tab[15];
@@ -19,11 +20,16 @@ IF(Ab < 2)
     Df = 5;
 END
 
-IF(Lk < 2)
-    Df = 5;
+FOR(I: 1: Gg)
+Df = 5;
 END
+
+Tab[I] = 5;
+Cd[5] = 'g';
 Fr5 = 6.2 ;
 Lk = Hgt;
+Gg = 5 + 6;
 Tab[4] = 0;
+
 }
 }

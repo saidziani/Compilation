@@ -68,9 +68,10 @@ Declarations :  Type idfVar ';' Declarations |
 ;
 typeVal : Entier {ty=1;}|caractere {ty=3;}|Reel {ty=2;}
 ;
-Instructions : Affectation|WhileLoop|ifC|ifElse|inst
+Instructions : Affectation|WhileLoop|ForLoop|ifC|ifElse|inst
 ;
 inst :  Affectation Instructions|
+    ForLoop Instructions|
     WhileLoop Instructions|
     ifC Instructions|
     ifElse Instructions
@@ -107,6 +108,10 @@ Affectation :   IDF '=' IDF ';' {
                     checkType(getType($1),getType($6));
                     getArit(getType($3));
                     }|
+                IDF '[' IDF ']' '=' typeVal ';' {
+                    checkType(getType($1),ty);
+                    getArit(getType($3));
+                    }|
                 IDF '=' IDF '[' IDF ']' ';' {
                     checkConstModif($1);
                     checkType(getType($1),getType($3));
@@ -115,15 +120,15 @@ Affectation :   IDF '=' IDF ';' {
                 IDF '='operationArithmetique ';'{
                     getArit(getType($1));
                     checkConstModif($1);
-                    }
+                    }|
                 IDF '[' Entier ']' '='operationArithmetique ';'{
                     checkConstModif($1);
                     getArit(getType($1));
-                    }
+                    }|
                 IDF '[' IDF ']' '='operationArithmetique ';'{
                     checkConstModif($1);
                     getArit(getType($1));
-                    //getArit(getType($3));
+                    getArit(getType($3));
                     }
 ;
 expArit : IDF{ used($1); getArit(getType($1)); }  | typeVal { getArit(ty); }
@@ -131,10 +136,10 @@ expArit : IDF{ used($1); getArit(getType($1)); }  | typeVal { getArit(ty); }
 exp :  IDF { used($1); } | typeVal | operationLogique | operationArithmetique
 ;
 operationArithmetique : 
-        expArit '+' expArit |
-        expArit '-' expArit |
-        expArit '*' expArit |
-        expArit '/' expArit 
+        expArit'+'expArit |
+        expArit'-'expArit |
+        expArit'*'expArit |
+        expArit'/'expArit 
 ;
 operationLogique :  
             exp or exp |
@@ -154,11 +159,12 @@ Condition : operationComparaison|operationLogique
 ;
 WhileLoop : WHILE '(' Condition ')' Instructions  END
 ;
+ForLoop : FOR '('IDF':' Entier':' IDF ')' Instructions END
+;
 ifC : IF '(' Condition')' Instructions END 
 ;
 ifElse : IF '(' Condition')' Instructions ELSE Instructions END
 ;
-
 
 %%
 int yyerror(char *msg) {
