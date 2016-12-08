@@ -66,14 +66,14 @@ int insert(char name[],int type,int constant,int size,int used){
     strcpy(p->content.name,name);
     
     if(!search(name,&adr)){
-    if(TS[i]==NULL){
-        p->svt=NULL;
-        TS[i]=p;
-    }
-    else{
-        p->svt=TS[i];
-        TS[i]=p;
-    }
+        if(TS[i]==NULL){
+            p->svt=NULL;
+            TS[i]=p;
+        }
+        else{
+            p->svt=TS[i];
+            TS[i]=p;
+        }
     } 
 }
 
@@ -90,45 +90,44 @@ void display(){
 
     for(i=0;i<N;i++){
         if(TS[i]!=NULL){
-        printf("%.4d  |",i);
-        printf("[%s]\t",TS[i]->content.name);
-        if(TS[i]->content.size == (-1)){
-            printf("|%.4d|",TS[i]->content.size);
-        }else{
-            printf("|%.5d|",TS[i]->content.size);
-        }
-        
-        switch(TS[i]->content.type)
-        {
-        case 1:printf("\tINTEGER\t|"); break;
-        case 2:printf("\tFLOAT\t|");break;
-        case 3:printf("\tCHAR\t|");break;
-        case 0:printf("\tCONST\t|");break;
-        }
-        if(!TS[i]->content.constant){
-            printf("  NO   |\n");
-        }else{
-            printf("  YES  |\n");
-        }
-        /* Before Colision */
-        p=TS[i];
-        while(p->svt != NULL){
-        printf("%.4d  |",i);
-        printf("[%s]\t",p->content.name);
-        if(p->content.size ==(-1)){
-            printf("|%.4d|",p->content.size);
-        }else{
-            printf("|%.5d|",p->content.size);
-        }
-        switch(p->content.type)
-        {
-        case 1:printf("\tINTEGER\t|\n"); break;
-        case 2:printf("\tFLOAT\t|\n");break;
-        case 3:printf("\tCHAR\t|\n");break;
-        case 0:printf("\tCONST\t|\n");break;
-        }
-        p=p->svt;
-        }
+            printf("%.4d  |",i);
+            printf("[%s]\t",TS[i]->content.name);
+            if(TS[i]->content.size == (-1)){
+                printf("|%.4d|",TS[i]->content.size);
+            }else{
+                printf("|%.5d|",TS[i]->content.size);
+            }
+            switch(TS[i]->content.type)
+            {
+                case 1:printf("\tINTEGER\t|"); break;
+                case 2:printf("\tFLOAT\t|");break;
+                case 3:printf("\tCHAR\t|");break;
+                case 0:printf("\tCONST\t|");break;
+            }
+            if(!TS[i]->content.constant){
+                printf("  NO   |\n");
+            }else{
+                printf("  YES  |\n");
+            }
+            /* After Colision */
+            p=TS[i];
+            while(p->svt != NULL){
+                printf("%.4d  |",i);
+                printf("[%s]\t",p->content.name);
+                if(p->content.size ==(-1)){
+                    printf("|%.4d|",p->content.size);
+                }else{
+                    printf("|%.5d|",p->content.size);
+                }
+                switch(p->content.type)
+                {
+                    case 1:printf("\tINTEGER\t|\n"); break;
+                    case 2:printf("\tFLOAT\t|\n");break;
+                    case 3:printf("\tCHAR\t|\n");break;
+                    case 0:printf("\tCONST\t|\n");break;
+                }
+                p=p->svt;
+            }
         }
     }
     printf("______|_________|_____|_________|_______|\n\n");

@@ -23,7 +23,7 @@ void displayQ(){
     puts("\n");
 
     for(i=0;i<indexQ;i++){
-            printf("(%s,%s,%s,%s)\n",TQ[i].oper,TQ[i].op1,TQ[i].op2,TQ[i].result);
+            printf("%d- (%s,%s,%s,%s)\n",i,TQ[i].oper,TQ[i].op1,TQ[i].op2,TQ[i].result);
     }
 
 }

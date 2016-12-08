@@ -9,6 +9,7 @@
     
 extern FILE* yyin;
 extern int yylineno;
+int yylex();
 int yyerror(char *msg);
 int ty;
 char word[50];
@@ -42,8 +43,16 @@ S : IDF '{' VAR'{' Declarations '}' CODE '{' Instructions '}' '}'
 
 Type: INTEGER {ty=1;} |CHAR {ty=3;}| FLOAT {ty=2;} 
 ;
-idfVar : IDF {if(!doubleDec($1)) insert($1,ty,0,-1,0);}|
-         IDF {if(!doubleDec($1)) insert($1,ty,0,-1,0);} '|' idfVar |
+idfVar : IDF {
+                if(!doubleDec($1)) 
+                    insert($1,ty,0,-1,0);
+                    quad("DEC",$1," "," ");
+             }|
+         IDF {
+                if(!doubleDec($1)) 
+                    insert($1,ty,0,-1,0);
+                    quad("DEC",$1," "," ");
+             } '|' idfVar |
 ;
 idfTabVar : IDF'['Entier']' {
             if(!doubleDec($1)) 
@@ -65,6 +74,7 @@ Declarations :  Type idfVar ';' Declarations |
                 |CONST IDF '=' typeVal ';' {
                 if(!doubleDec($2))
                     insert($2,ty,1,-1,0);
+                    quad("DEC",$2," "," ");
                 } Declarations
 ;
 typeVal : Entier {ty=1;}|caractere {ty=3;}|Reel {ty=2;}
@@ -88,11 +98,13 @@ Affectation :   IDF '=' IDF ';' {
                     checkConstModif($1);
                     checkSize($1,$3); checkType(getType($1),ty);
                     used($1);
+                    //quad("=",$1,word," ");
                     }|
                 IDF '=' typeVal ';' {
                     checkConstModif($1);
                     checkType(getType($1),ty);
                     used($1);
+                    //quad("=",$1,$3," ");
                     }|
                 IDF '=' IDF '['Entier']' ';' {
                     checkConstModif($1);
@@ -100,12 +112,15 @@ Affectation :   IDF '=' IDF ';' {
                     checkType(getType($1),getType($3)); 
                     used($1);
                     used($3);
+                    sprintf(word,"%d",$5);
+                    quad("=",$1,word," ");
                     }|
                 IDF '[' Entier ']' '=' IDF ';' {
                     checkSize($1,$3); 
                     checkType(getType($1),getType($6));
                     used($1);
                     used($6);
+                    quad("=",$1,$6," ");
                     }|
                 IDF '[' IDF ']' '=' IDF ';' {
                     checkType(getType($1),getType($6));
@@ -113,12 +128,14 @@ Affectation :   IDF '=' IDF ';' {
                     used($1);
                     used($3);
                     used($6);
+                    quad("=",$1,$6," ");
                     }|
                 IDF '[' IDF ']' '=' typeVal ';' {
                     checkType(getType($1),ty);
                     getArit(getType($3));
                     used($1);
                     used($3);
+                   // quad("=",$1,$6," ");
                     }|
                 IDF '=' IDF '[' IDF ']' ';' {
                     checkConstModif($1);
@@ -127,6 +144,7 @@ Affectation :   IDF '=' IDF ';' {
                     used($1);
                     used($3);
                     used($5);
+                    quad("=",$1,$5," ");
                     }|
                 IDF '='operationArithmetique ';'{
                     getArit(getType($1));
@@ -146,20 +164,51 @@ Affectation :   IDF '=' IDF ';' {
                     used($3);
                     }
 ;
-expArit : IDF{ used($1); getArit(getType($1)); }  |
-          IDF '['Entier']' { used($1); getArit(getType($1)); }  |
-          IDF '['IDF']' { used($1); used($3); getArit(getType($1)); getArit(getType($3)); }  |
-          typeVal { getArit(ty); }
+expArit : IDF{  
+                getArit(getType($1)); 
+                used($1);
+          }|
+          IDF '['Entier']' { 
+                getArit(getType($1));
+                used($1); 
+          }|
+          IDF '['IDF']' {  
+                getArit(getType($1)); 
+                getArit(getType($3));
+                used($1); 
+                used($3); 
+          }|
+          typeVal { 
+                getArit(ty); 
+          }
 ;
-exp :  IDF { used($1); } | 
-       IDF '['Entier']' { used($1); getArit(getType($1)); }  |
-       IDF '['IDF']' { used($1); used($3); getArit(getType($1)); getArit(getType($3)); }  |
+exp :  IDF { 
+            used($1); 
+            }| 
+       IDF '['Entier']' {  
+            getArit(getType($1));
+            used($1); 
+            }|
+       IDF '['IDF']' {  
+            getArit(getType($1)); 
+            getArit(getType($3));
+            used($1); 
+            used($3); 
+            }|
        typeVal | operationLogique | operationArithmetique
 ;
-expCompar :  IDF { used($1); getArit(getType($1)); } | 
-             IDF '['Entier']' { used($1); getArit(getType($1)); }  |
-             IDF '['IDF']' { used($1); used($3); getArit(getType($1)); getArit(getType($3)); }  |
-             typeVal {getArit(ty);} | operationArithmetique
+expCompar :  IDF { 
+                used($1); 
+                }| 
+             IDF '['Entier']' { 
+                used($1); 
+                }|
+             IDF '['IDF']' {  
+                getArit(getType($3));
+                used($1); 
+                used($3); 
+                }|
+             typeVal | operationArithmetique
 ;
 operationArithmetique : 
         expArit'+'expArit |
@@ -204,10 +253,10 @@ int main()
     yyin=fopen("code.txt","r");
     init();
     yyparse();
-    display();
-    deleteNotUsed();
-    displayQ();
     //display();
+    deleteNotUsed();
+    display();
+    displayQ();
     return 0;
 }
 

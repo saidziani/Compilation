@@ -5,7 +5,7 @@ VAR
 CONST Ab=5 ;
 INTEGER Df | Gg;
 VEC CHAR Cd[5] ;
-INTEGER I ;
+INTEGER I | N | J;
 FLOAT Fr5 | Gth4;
 VEC INTEGER Tab[100];
 CHAR Lk | Hgt;
@@ -14,6 +14,7 @@ CODE
 {
 Df = Df + Gg;
 Gg = 25 ;
+%%saqdazdza_zfezej
 Cd[5] = '5';
 Df = Tab[15];
 Df = Df + 45;
@@ -25,9 +26,19 @@ IF(Tab[5] < Fr5 + 5 )
 END
 FOR(I: 1: Gg)
     Df = 5;
+    IF(Df >= 5)
+        Gg = Gg + 1 ;
+    END
 END
 Tab[I] = 5;
-WHILE(Tab[1] < 4 )
+WHILE(Tab[I] < 4 )
+    IF(Lk != '5')
+        Cd[I]= 'I';
+    ELSE
+        FOR(J: 2: N)
+            J=J+3;
+        END
+    END    
     I=I+1;
 END
 Cd[5] = 'g';

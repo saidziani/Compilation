@@ -15,7 +15,7 @@ entier_signe "("{signe}[1-9]{chiffre}*")"
 reel {chiffre}+.{chiffre}+
 reel_signe "("{signe}{reel}")"
 caractere \'(.)\'
-comment %%(.)
+comment %%(.)*
 tab [\t]+
 idf {majusc}({alpha}|{chiffre})*{0,6}
 saut "\n"+
